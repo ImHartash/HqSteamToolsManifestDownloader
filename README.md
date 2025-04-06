@@ -6,3 +6,21 @@
 [![Discord](https://img.shields.io/badge/Join-HqHacks-blue?style=for-the-badge&logo=discord)](https://discord.gg/bH9w3UmgYe)
 </div>
 
+> [!CAUTION]
+> This tool is unofficial and not affiliated with Valve/Steam. 
+> Use at your own risk.
+
+## How to download
+Go to [GitHub Releases](https://github.com/ImHartash/HqSteamToolsManifestDownloader/tree/Releases) and select version you want. 
+
+## Developing
+
+This project made on Python with version 3.11
+All libs allocated in `requirements.txt`
+
+Usage:
+```
+pip freeze -l > requirements.txt
+```
+
+Good Luck!

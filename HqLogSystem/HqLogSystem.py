@@ -21,7 +21,7 @@ class HqLogSystem:
 ██║░░██║░╚═██╔═╝░██║░░██║██║░░██║╚█████╔╝██║░╚██╗██████╔╝
 ╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚═════╝░
               {Style.RESET_ALL}''')
-        print("GitHub repo - [TODO: MAKE HERE A GIT LINK]")
+        print("GitHub repo - https://github.com/ImHartash/HqSteamToolsManifestDownloader")
         print("Also join to our discord server - https://discord.gg/bH9w3UmgYe")
         print("Made by HqHacks, with love!\n")
     
