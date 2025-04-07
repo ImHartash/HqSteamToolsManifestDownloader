@@ -32,18 +32,18 @@ async def ProcedureSetup(nAppId: str) -> None:
         LOG_SYSTEM.Error(str(e))
         
 
-def MenuAddGame():
+async def MenuAddGame():
     try:
         APP_ID = LOG_SYSTEM.GetString("Enter game app id or game URL")
         if "https://store.steampowered.com/app/" in APP_ID:
             APP_ID = HQ_TOOLS.GetAppIdFromReference(APP_ID)
         HQ_TOOLS.ValidateId(APP_ID)
-        asyncio.run(ProcedureSetup(APP_ID))
+        await ProcedureSetup(APP_ID)
     except (asyncio.CancelledError, KeyboardInterrupt):
         LOG_SYSTEM.Close()
 
 
-def MenuAddFileList():
+async def MenuAddFileList():
     try:
         config = HQ_CONFIG.load_configuration()
         custom_path = config.get("auto_read_filepath", "")
@@ -59,15 +59,20 @@ def MenuAddFileList():
                 if "https://store.steampowered.com/app/" in app_id:
                     app_id = HQ_TOOLS.GetAppIdFromReference(app_id)
                 HQ_TOOLS.ValidateId(app_id)
-                asyncio.run(ProcedureSetup(app_id))
+                await ProcedureSetup(app_id)
     except (asyncio.CancelledError, KeyboardInterrupt):
         LOG_SYSTEM.Close()
-        
 
-if __name__ == '__main__':
-    init()
-    InitializeVars()
-    
+
+async def MenuGetRate():
+    try:
+        await HQ_PARSER.CheckGitHubApiRateLimit()
+        LOG_SYSTEM.PauseConsole()
+    except (asyncio.CancelledError, KeyboardInterrupt):
+        LOG_SYSTEM.Close()
+
+
+async def main():
     while True:
         LOG_SYSTEM.ClearConsole()
         LOG_SYSTEM.PrintBanner()
@@ -78,9 +83,18 @@ if __name__ == '__main__':
         
         match user_choice:
             case "1":
-                MenuAddGame()
+                await MenuAddGame()
             case "2":
-                MenuAddFileList()
+                await MenuAddFileList()
+            case "8":
+                await MenuGetRate()
             case "9":
-                asyncio.run(Vars.HTTP_CLIENT.aclose())
+                await Vars.HTTP_CLIENT.aclose()
                 LOG_SYSTEM.Close()
+
+
+if __name__ == '__main__':
+    init()
+    InitializeVars()
+    
+    asyncio.run(main())

@@ -8,6 +8,7 @@ LOG_ENABLED = True
 MenuActionsButtons = {
     1: "Add game for SteamTools",
     2: "Add game list file",
+    8: "Check my requests amount (GitHub)",
     9: "Exit"
 }
 

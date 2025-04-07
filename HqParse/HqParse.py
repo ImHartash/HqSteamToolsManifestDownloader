@@ -155,7 +155,7 @@ class HqParser:
         except httpx.HTTPStatusError as e:
             LOG_SYSTEM.Error("HTTP Error. " + str(e))
         except Exception as e:
-            LOG_SYSTEM.Error("Something went wrong. " + str(e))
+            LOG_SYSTEM.Error("Something went wrong while handling. " + str(e))
         
         return collected, depot_map
     
