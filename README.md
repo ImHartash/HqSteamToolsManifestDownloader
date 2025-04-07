@@ -31,7 +31,7 @@ To do this, you need to enter your GitHub token in the `github_token` field in t
 
 1. Go to the [GitHub token creation page](https://github.com/settings/tokens).
 
-2. lick on "**Generate new token**" at the top left and select "**Generate new token (classic)**".
+2. Click on "**Generate new token**" at the top left and select "**Generate new token (classic)**".
 ![Generating token example](./assets/git/howtogeneratetoken1.png)
 
 3. In the "**Note**" field, enter a name for the token (any name), and in the "**Expiration**" field, set the token's expiration date (your choice).
