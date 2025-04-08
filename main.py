@@ -70,6 +70,19 @@ async def MenuGetRate():
         LOG_SYSTEM.PauseConsole()
     except (asyncio.CancelledError, KeyboardInterrupt):
         LOG_SYSTEM.Close()
+        
+    
+async def MenuIsDownloadable():
+    try:
+        await HQ_PARSER.CheckGitHubApiRateLimit()
+        APP_ID = LOG_SYSTEM.GetString("Enter game app id or game URL")
+        if "https://store.steampowered.com/app/" in APP_ID:
+            APP_ID = HQ_TOOLS.GetAppIdFromReference(APP_ID)
+        is_downloadable = await HQ_PARSER.IsDownloadable(APP_ID)
+        LOG_SYSTEM.Info("Cannot find any manifest files. (can't be downloaded)" if not is_downloadable else "Manifest files was successfully found! (can be downloaded)")
+        LOG_SYSTEM.PauseConsole()
+    except (asyncio.CancelledError, KeyboardInterrupt):
+        LOG_SYSTEM.Close()
 
 
 async def main():
@@ -86,6 +99,8 @@ async def main():
                 await MenuAddGame()
             case "2":
                 await MenuAddFileList()
+            case "7":
+                await MenuIsDownloadable()
             case "8":
                 await MenuGetRate()
             case "9":

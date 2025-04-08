@@ -8,6 +8,7 @@ LOG_ENABLED = True
 MenuActionsButtons = {
     1: "Add game for SteamTools",
     2: "Add game list file",
+    7: "Check game is downloadable (uses GitHub tokens)",
     8: "Check my requests amount (GitHub)",
     9: "Exit"
 }
@@ -54,15 +55,15 @@ class HqLogSystem:
         return input(f"{Fore.LIGHTMAGENTA_EX}[IN]{Style.RESET_ALL} {message}: ")
     
     def Close(self) -> None:
-        print(f"{Fore.LIGHTCYAN_EX}[OUT]{Style.RESET_ALL} Press space or enter to exit...")
+        print(f"{Fore.LIGHTCYAN_EX}[OUT]{Style.RESET_ALL} Press space, enter or escape to exit...")
         while True:
-            if keyboard.read_key() in ['space', 'enter']:
+            if keyboard.read_key() in ['space', 'enter', 'esc']:
                 sys.exit(1)
                 
     def PauseConsole(self) -> None:
-        LOG_SYSTEM.Info("Press space or enter to continue...")
+        LOG_SYSTEM.Info("Press space, enter or escape to continue...")
         while True:
-            if keyboard.read_key() in ['space', 'enter']:
+            if keyboard.read_key() in ['space', 'enter', 'esc']:
                 break
     
     def ClearConsole(self) -> None:

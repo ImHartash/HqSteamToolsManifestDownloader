@@ -178,6 +178,18 @@ class HqParser:
             await f.write(lua_content)
             
         return True
+    
+    async def IsDownloadable(self, app_id: str) -> bool:
+        try:
+            selected_repository, latest_repo_date = await self._GetLatestRepoInfo(app_id)
+            if selected_repository is None: return False 
+            else: return True
+        except httpx.HTTPStatusError as e:
+            LOG_SYSTEM.Error("HTTP Error. " + str(e))
+        except Exception as e:
+            LOG_SYSTEM.Error("Something went wrong while checking downloadable. " + str(e))
+            
+        return False
 
 
 HQ_PARSER = HqParser()
