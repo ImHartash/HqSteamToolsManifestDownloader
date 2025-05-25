@@ -9,6 +9,7 @@ CFG_DEFAULT = {
     "github_token": "",
     "steam_path": "",
     "auto_read_filepath": "",
+    "auto_save_in_file": True,
 }
 
 

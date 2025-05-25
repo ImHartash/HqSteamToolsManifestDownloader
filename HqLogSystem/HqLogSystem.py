@@ -4,10 +4,12 @@ from os import system, name
 from colorama import Fore, Style
 
 LOG_ENABLED = True
+APPLICATION_VERSION: str = '1.0-beta.3'
 
 MenuActionsButtons = {
     1: "Add game for SteamTools",
     2: "Add game list file",
+    3: "Download missing manifests from auto-save [NEW]",
     7: "Check game is downloadable (uses GitHub tokens)",
     8: "Check my requests amount (GitHub)",
     9: "Exit"
@@ -24,8 +26,8 @@ class HqLogSystem:
 ╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚═════╝░
               {Style.RESET_ALL}''')
         print("GitHub repo - https://github.com/ImHartash/HqSteamToolsManifestDownloader")
-        print("Also join to our discord server - https://discord.gg/bH9w3UmgYe")
-        print("Made by HqHacks, with love!\n")
+        print("Also join to our discord server - https://discord.gg/cy3KwwCFEA")
+        print(f"Made by HqHacks, with love! (v.{APPLICATION_VERSION})\n")
     
     def Menu(self) -> str:
         for key, value in MenuActionsButtons.items():

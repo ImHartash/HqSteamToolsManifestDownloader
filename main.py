@@ -20,13 +20,13 @@ def InitializeVars() -> None:
     Vars.HTTP_HEADER = {"Authorization" : f"Bearer {Vars.GITHUB_TOKEN}"} if Vars.GITHUB_TOKEN is not None else None # Add adding github token
     
 
-async def ProcedureSetup(nAppId: str) -> None:
+async def ProcedureSetup(nAppId: str, isFromAutoSave: bool = False) -> None:
     try:
         await HQ_PARSER.CheckGitHubApiRateLimit()
         
         depot_data, depot_map = await HQ_PARSER.HandleDepotFiles(nAppId)
         
-        if await HQ_PARSER.SetupSteamTools(depot_data, nAppId, depot_map):
+        if await HQ_PARSER.SetupSteamTools(depot_data, nAppId, depot_map, isFromAutoSave):
             LOG_SYSTEM.Success(f"Game {nAppId} successfully added. To see it you need to reload steam client.")
     except Exception as e:
         LOG_SYSTEM.Error(str(e))
@@ -83,7 +83,32 @@ async def MenuIsDownloadable():
         LOG_SYSTEM.PauseConsole()
     except (asyncio.CancelledError, KeyboardInterrupt):
         LOG_SYSTEM.Close()
-
+        
+async def MenuAddMissingManifests():
+    try:
+        autosave_file = HQ_CONFIG.cfg_subfolder / 'auto-save.txt'
+        if not autosave_file.exists():
+            LOG_SYSTEM.Error("Auto-Save file couldn't find. Please check configuration folder.")
+            return
+        
+        with open(autosave_file, 'r+') as autosave_file:
+            for fline in autosave_file:
+                if fline.strip() in ["", "\t", "\n", ...]:
+                    continue
+                
+                app_id = fline.strip()
+                
+                LOG_SYSTEM.Info(f"Checking {app_id}")
+                HQ_TOOLS.ValidateId(app_id)
+                if await HQ_PARSER.CheckGameIsDownloaded(app_id):
+                    LOG_SYSTEM.Info(f"App Id {app_id} is downloaded.")
+                    continue
+                
+                LOG_SYSTEM.Warn(f"App Id {app_id} was not found. Downloading...")
+                await ProcedureSetup(app_id, True)
+                    
+    except Exception:
+        LOG_SYSTEM.Close()
 
 async def main():
     while True:
@@ -99,6 +124,8 @@ async def main():
                 await MenuAddGame()
             case "2":
                 await MenuAddFileList()
+            case "3":
+                await MenuAddMissingManifests()
             case "7":
                 await MenuIsDownloadable()
             case "8":

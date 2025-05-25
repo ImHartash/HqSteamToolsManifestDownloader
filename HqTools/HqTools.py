@@ -3,6 +3,7 @@ from pathlib import Path
 
 from HqLogSystem.HqLogSystem import LOG_SYSTEM
 from HqCommon.HqConfig import HQ_CONFIG
+import HqCommon.HqVars as V
 
 
 class HqTools:
@@ -31,6 +32,10 @@ class HqTools:
         except Exception as e:
             LOG_SYSTEM.Error("Failed validate App ID. Exception: " + str(e))
             LOG_SYSTEM.Close()
+            
+    def GetFilesFromSteamDir(self, strSubfolder: str) -> list:
+        folder_path: Path = V.STEAM_PATH / strSubfolder
+        return [file.name for file in folder_path.iterdir() if file.is_file()]
             
             
 HQ_TOOLS = HqTools()

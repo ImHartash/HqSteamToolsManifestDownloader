@@ -11,4 +11,5 @@ HTTP_HEADER = {"Authorization": f"Bearer {GITHUB_TOKEN}"} if GITHUB_TOKEN else N
 
 REPO_LIST = ["SteamAutoCracks/ManifestHub",
              "ikun0014/ManifestHub",
-             "Auiowu/ManifestAutoUpdate",]
+             "Auiowu/ManifestAutoUpdate",
+             "tymolu233/ManifestAutoUpdate-fix"]

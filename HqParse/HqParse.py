@@ -5,9 +5,11 @@ import time
 import vdf
 import aiofiles
 import pathlib
-import HqCommon.HqVars as V
 
+import HqCommon.HqVars as V
+from HqCommon.HqConfig import HQ_CONFIG
 from HqLogSystem.HqLogSystem import LOG_SYSTEM
+from HqTools.HqTools import HQ_TOOLS
 
 from typing import Any, List, Tuple, Dict
 
@@ -71,7 +73,7 @@ class HqParser:
             response_json: ujson = response.json()
             
             if response.status_code != 200:
-                LOG_SYSTEM.Error("Failed to connect to GitHub. Status code - " + response.status_code)
+                LOG_SYSTEM.Error(f"Failed to connect to GitHub. Status code - {response.status_code}")
                 return
             
             rate_limit = response_json.get("rate", {})
@@ -90,7 +92,7 @@ class HqParser:
         except KeyboardInterrupt:
             LOG_SYSTEM.Info("Stopped.")
         except Exception as e:
-            LOG_SYSTEM.Error("Something went wrong. " + str(e))
+            LOG_SYSTEM.Error("Something went wrong while checking GitHub tokens (may be tokne not valid). Error: " + str(e))
     
     async def HandleDepotFiles(self, app_id: str) -> Tuple[List[Any], dict[Any, Any]]:
         collected = []
@@ -159,7 +161,7 @@ class HqParser:
         
         return collected, depot_map
     
-    async def SetupSteamTools(self, depot_data: List[Tuple[str, str]], app_id: str, depot_map: Dict) -> bool:     
+    async def SetupSteamTools(self, depot_data: List[Tuple[str, str]], app_id: str, depot_map: Dict, is_from_autosave: bool) -> bool:     
         st_path = V.STEAM_PATH / "config" / "stplug-in"
         st_path.mkdir(exist_ok=True)
         
@@ -176,18 +178,48 @@ class HqParser:
         lua_file = st_path / f"{app_id}.lua"
         async with aiofiles.open(lua_file, "w") as f:
             await f.write(lua_content)
+        
+        if HQ_CONFIG.load_configuration()['auto_save_in_file'] and not is_from_autosave:
+            with open(HQ_CONFIG.cfg_subfolder / 'auto-save.txt', 'a+') as cfg_file:
+                cfg_file.write(f'{app_id}\n')
+            LOG_SYSTEM.Info("Auto Saved Application ID")
             
         return True
     
     async def IsDownloadable(self, app_id: str) -> bool:
         try:
-            selected_repository, latest_repo_date = await self._GetLatestRepoInfo(app_id)
+            selected_repository, _ = await self._GetLatestRepoInfo(app_id)
             if selected_repository is None: return False 
             else: return True
         except httpx.HTTPStatusError as e:
             LOG_SYSTEM.Error("HTTP Error. " + str(e))
         except Exception as e:
             LOG_SYSTEM.Error("Something went wrong while checking downloadable. " + str(e))
+            
+        return False
+    
+    async def CheckGameIsDownloaded(self, app_id: str) -> bool:
+        try:
+            manifest_id: str = None
+            
+            lua_files = HQ_TOOLS.GetFilesFromSteamDir('config/stplug-in')
+            if f'{app_id}.lua' not in lua_files:
+                return False
+            
+            with open(V.STEAM_PATH / f'config/stplug-in/{app_id}.lua', 'r+') as lua_file:
+                for line in lua_file:
+                    if line.strip().startswith('setManifestid'):
+                        manifest_id = line.split('"')[1]
+                        LOG_SYSTEM.Info(f"Found ManifestId ({manifest_id})")
+                        break
+            
+            if manifest_id is None: return True
+            
+            manifest_files = HQ_TOOLS.GetFilesFromSteamDir('depotcache')
+            return any(f'_{manifest_id}.' in file for file in manifest_files)
+            
+        except Exception as e:
+            LOG_SYSTEM.Error("Something went wrong while checking steam depotcache. " + str(e))
             
         return False
 
